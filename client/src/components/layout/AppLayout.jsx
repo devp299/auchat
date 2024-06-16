@@ -17,10 +17,10 @@ const AppLayout = () => WrappedComponent=> {
         console.log("Delete Chat ");
     }
     return (
-        <>
+        <div>
             <Title />
             <Header/>
-            <Grid container height={"calc(100vh - 4rem)"}>
+            <Grid container height={"calc(100vh - 4rem)"} >
                 <Grid item sm={4} md={3} sx={{display: {xs:"none", sm:"block"}}} height={"100%"} >
                     <ChatList 
                         chats={sampleChats} 
@@ -39,8 +39,7 @@ const AppLayout = () => WrappedComponent=> {
                 <Profile />
                 </Grid>
             </Grid>
-            <WrappedComponent {...props} />
-        </>
+        </div>
     );
   };
 };
