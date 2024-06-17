@@ -1,11 +1,15 @@
 import { Avatar, AvatarGroup, Box, Stack } from '@mui/material'
-import React from 'react'
+import React, { memo } from 'react'
 import { transformImage } from '../../lib/features'
 
 const AvatarCard = ({avatar=[],max=4}) => {
   return (
     <Stack direction={"row"} spacing={0.5}>
-        <AvatarGroup max = {max}>
+        <AvatarGroup max = {max}
+        sx={{
+            position: "relative"
+        }}
+        >
             <Box width={"3.5rem"} height={"2rem"}>
             {avatar.map((i,index)=> (
                 <Avatar 
@@ -29,4 +33,4 @@ const AvatarCard = ({avatar=[],max=4}) => {
   )
 }
 
-export default AvatarCard
+export default memo(AvatarCard);

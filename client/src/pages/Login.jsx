@@ -4,6 +4,7 @@ import {CameraAlt as CameraAltIcon, ImageOutlined} from '@mui/icons-material'
 import { VisuallyHiddenInput } from '../components/styles/StyledComponents';
 import {useFileHandler, useInputValidation, useStrongPassword} from '6pp'
 import { usernameValidator } from '../utils/validators';
+import { bgGradient } from '../constants/color';
 
 
 export default function Login() {
@@ -26,7 +27,7 @@ export default function Login() {
   return (
     <div style={
         {
-            backgroundImage: "linear-gradient(rgba(200,200,200,0.5),rgba(120,110,220,0.5))",
+            backgroundImage: bgGradient,
             overflowY: "scroll"
             
         }
