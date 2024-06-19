@@ -43,13 +43,13 @@ const Chat = () => {
       height: "10%",
     }}
   >
-    <Stack direction={"row"} height={"100%"} padding={"1rem"}
+    <Stack direction={"row"} height={"100%"} padding={"0.55rem"}
     alignItems={"center"} position={"relative"}
     >
 
       <IconButton sx={{
         position: "absolute",
-        left: "1.5rem",
+        left: "1.2rem",
         rotate: "30deg",
       }}
       >
