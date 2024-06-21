@@ -1,4 +1,5 @@
-import { Schema,Types,model, models } from "mongoose";
+import { Schema,Types,model } from "mongoose";
+import { User } from "./user.js";
 
 const schema = new Schema({
     name: {
@@ -11,7 +12,7 @@ const schema = new Schema({
     },
     creator: {
         type: Types.ObjectId,
-        ref: "User",
+        ref: "User"
     },
     members: [
         {
