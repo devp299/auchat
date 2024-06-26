@@ -1,20 +1,22 @@
 import { compare } from 'bcrypt';
 import {User} from '../models/user.js'
 import {Chat} from '../models/chat.js'
-import { cookieOptions, emitEvent, sendToken } from '../utils/features.js';
+import { cookieOptions, emitEvent, sendToken, uploadFilesToCloudinary } from '../utils/features.js';
 import { TryCatch } from '../middlewares/error.js';
 import { ErrorHandler } from '../utils/utility.js';
 import {Request} from '../models/request.js'
 import { NEW_REQUEST, REFETCH_CHATS } from '../constants/events.js';
 import { getOtherMember } from '../lib/helper.js';
 // Create a new user and save it to the database and save in cookie
-const newUser = async (req,res,next) => {
+const newUser = TryCatch(async (req,res,next) => {
 
     const {name,username,password,bio} = req.body;
-
+    const file = req.file;
+    if(!file) return next(new ErrorHandler("Please upload avatar"));
+    const result = await uploadFilesToCloudinary([file]);
     const avatar = {
-        public_id: "slhkre",
-        url: "lhdkfjps"
+        public_id: result[0].public_id,
+        url: result[0].url,
     }
 
     const user = await User.create({ 
@@ -25,7 +27,7 @@ const newUser = async (req,res,next) => {
         avatar
     });
     sendToken(res,user,201, "User created")
-}
+})
 
 const login = TryCatch(async (req,res,next) => {
         const { username, password } = req.body;

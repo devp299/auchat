@@ -40,6 +40,11 @@ const adminLogout = TryCatch(async (req,res,next) => {
         })
 })
 
+const getAdminData = TryCatch(async (req,res,next) => {
+    return res.status(200).json({
+        admin: true,
+    })
+})
 const allUsers = TryCatch(async (req,res) => {
 
     const users = await User.find({});
@@ -169,4 +174,4 @@ const getDashboardStats = TryCatch(async (req,res) => {
         stats,
     });
 });
-export { adminLogout,adminLogin,allUsers, allChats, allMessages,getDashboardStats }
+export { getAdminData,adminLogout,adminLogin,allUsers, allChats, allMessages,getDashboardStats }

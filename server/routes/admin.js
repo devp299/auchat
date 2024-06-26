@@ -1,5 +1,5 @@
 import express from "express";
-import { adminLogin, adminLogout, allChats, allMessages, allUsers, getDashboardStats } from "../controllers/admin.js";
+import { adminLogin, adminLogout, allChats, allMessages, allUsers, getAdminData, getDashboardStats } from "../controllers/admin.js";
 import { adminLoginValidator, validateHandler } from "../lib/validators.js";
 import { adminOnly } from "../middlewares/auth.js";
 
@@ -10,7 +10,7 @@ app.get("/logout",adminLogout);
 
 // Only admin can access these routes
 app.use(adminOnly);
-app.get("/");
+app.get("/",getAdminData);
 app.get("/users",allUsers);
 app.get("/chats",allChats);
 app.get("/messages",allMessages);
