@@ -4,18 +4,20 @@ import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
-import userRoute from './routes/user.js';
 import {createServer} from 'http';
 import cors from 'cors';
 import {v2 as cloudinary} from 'cloudinary';
-import chatRoute from './routes/chat.js';
-import adminRoute from './routes/admin.js';
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import {v4 as uuid} from 'uuid';
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
 import { corsOptions } from "./constants/config.js";
-import { socketAuthenticator } from "./middlewares/auth.js";
+import { socketAuthenticator } from "./middlewares/auth.js";    
+
+import userRoute from './routes/user.js';
+import chatRoute from './routes/chat.js';
+import adminRoute from './routes/admin.js';
+
 dotenv.config({
     path: "./.env",
 });
@@ -38,7 +40,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server,{
     cors: corsOptions,
-})
+});
 // Using MiddleWares here
 app.use(express.json());
 app.use(cookieParser());
@@ -52,17 +54,18 @@ app.get("/",(req,res)=>{
     res.send("Hello World");
 });
 
-app.use((socket,next) => {
-    cookieParser()(socket.request, socket.request.res, async (err) =>
-        await socketAuthenticator(err,socket,next));
+io.use((socket,next) => {
+    cookieParser()(
+        socket.request, 
+        socket.request.res, 
+        async (err) => await socketAuthenticator(err,socket,next)
+    );
 });
 
 io.on("connection",(socket) =>{
-    
     const user = socket.user;
-    // console.log(user);
     userSocketIDs.set(user._id.toString(),socket.id);
-    console.log(socket.id)
+    console.log(userSocketIDs)
 
     socket.on(NEW_MESSAGE, async({chatId,members,message})=> {
         const messageForRealTime = {

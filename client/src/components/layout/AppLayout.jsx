@@ -21,7 +21,7 @@ const AppLayout = () => WrappedComponent=> {
 
     const socket = getSocket();
 
-    console.log(socket.id)
+    console.log(socket.id);
 
     const { isMobile } = useSelector((state) => state.misc)
     const { user } = useSelector((state) => state.auth)

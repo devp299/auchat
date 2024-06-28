@@ -1,10 +1,10 @@
 import { adminSecretKey } from "../app.js";
-import { AUCHAT_TOKEN } from "../constants/config.js";
 import { User } from "../models/user.js";
 import { ErrorHandler } from "../utils/utility.js";
 import jwt from 'jsonwebtoken';
+import { TryCatch } from "./error.js";
 
-const isAuthenticated = (req,res,next) => {
+const isAuthenticated = TryCatch ((req,res,next) => {
     const token = req.cookies["auchat-token"];
 
     if(!token) 
@@ -15,7 +15,7 @@ const isAuthenticated = (req,res,next) => {
     req.user = decodedData._id;
 
     next();
-};
+});
 
 const adminOnly = (req,res,next) => {
     const token = req.cookies["auchat-admin-token"];
@@ -31,14 +31,15 @@ const adminOnly = (req,res,next) => {
     next();
 };
 
-const socketAuthenticator = async (err,socket,next) => {
-
+const socketAuthenticator = async (arr, socket, next) => {
     try{
-        // if(err) console.log(err);
+        if(arr) return next(arr);
 
         const authToken = socket.request.cookies["auchat-token"];
+
         console.log(authToken);
-        if(!authToken) return next(new ErrorHandler("Please login to access this route",401));
+        if(!authToken) 
+            return next(new ErrorHandler("Please login to access this route",401));
 
         const decodedData = jwt.verify(authToken,process.env.JWT_SECRET)
 

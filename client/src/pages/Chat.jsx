@@ -11,6 +11,7 @@ import MessageComponent from '../components/shared/MessageComponent';
 import { getSocket } from '../socket';
 import { NEW_MESSAGE } from '../constants/events';
 import { useChatDetailsQuery } from '../redux/api/api';
+import { useSocketEvents } from '../hooks/hook';
 
 const user = {
   _id: "lshddkfhpr",
@@ -22,7 +23,7 @@ const Chat = ({chatId}) => {
   const containerRef = useRef(null);
 
   const socket = getSocket();
-  const chatDetails = useChatDetailsQuery({chatId,skip: !chatId})
+  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId})
 
   const [message,setMessage] = useState("");
   const members = chatDetails?.data?.chat?.members;
@@ -38,14 +39,12 @@ const Chat = ({chatId}) => {
 
   const newMessaegesHandler = useCallback((data) => {
     console.log(data);
-  },[])
-  useEffect(() => {
-    socket.on(NEW_MESSAGE,newMessaegesHandler);
-
-    return () => {
-      socket.off(NEW_MESSAGE,newMessaegesHandler)
-    }
   },[]);
+
+  const eventHandler = { [NEW_MESSAGE]: newMessaegesHandler };
+  
+  useSocketEvents(socket,eventHandler);
+  
   return chatDetails.isLoading? (<Skeleton /> ):(
   <Fragment>
   <Stack 

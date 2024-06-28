@@ -54,7 +54,7 @@ const api = createApi({
                 return {
                     url,
                     credentials: "include"
-                }
+                };
             },
             providesTags: ["Chat"],
         }),
