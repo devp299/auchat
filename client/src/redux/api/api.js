@@ -4,7 +4,7 @@ import { server } from "../../constants/config";
 const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({baseUrl: `${server}/api/v1/`}),
-    tagTypes: ["Chat","User"],
+    tagTypes: ["Chat","User","Message"],
 
     endpoints: (builder) => ({
         myChats: builder.query({
@@ -14,6 +14,7 @@ const api = createApi({
             }),
             providesTags: ["Chat"],
         }),
+        
         searchUser: builder.query({
             query: (name) => ({
                 url: `user/search?name=${name}`,
@@ -21,6 +22,7 @@ const api = createApi({
             }),
             providesTags: ["User"],
         }),
+
         sendFriendRequest: builder.mutation({
             query: (data) => ({
                 url: "user/sendrequest",
@@ -30,6 +32,7 @@ const api = createApi({
             }),
             invalidatesTags: ["User"],
         }),
+
         getNotifications: builder.query({
             query: () => ({
                 url: `user/notifications`,
@@ -37,6 +40,7 @@ const api = createApi({
             }),
             keepUnusedDataFor: 0,
         }),
+
         acceptFriendRequest: builder.mutation({
             query: (data) => ({
                 url: "user/acceptrequest",
@@ -46,6 +50,7 @@ const api = createApi({
             }),
             invalidatesTags: ["Chat"],
         }),
+
         chatDetails: builder.query({
             query: ({ chatId, populate = false}) => 
             {
@@ -58,8 +63,56 @@ const api = createApi({
             },
             providesTags: ["Chat"],
         }),
+
+        getMessages: builder.query({
+            query: ({ chatId, page}) => ({
+                url: `chat/message/${chatId}?page=${page}`,
+                credentials: "include",
+            }),
+            keepUnusedDataFor: 0,
+        }),
+
+        sendAttachments: builder.mutation({
+            query: (data) => ({
+                url: "chat/message",
+                method: "POST",
+                credentials:"include",
+                body: data,
+            }),
+        }),
+
+        myGroups: builder.query({
+            query: () => ({
+                url: "chat/my/groups",
+                credentials:"include",
+            }),
+            providesTags: ["Chat"],
+        }),
+
+        availableFriends: builder.query({
+            query: (chatId) => 
+            {
+                let url = `user/friends`;
+                if(chatId) url+=`?chatId=${chatId}`;
+                return {
+                    url,
+                    credentials: "include"
+                };
+            },
+            providesTags: ["Chat"],
+        }),
+
+        newGroup: builder.mutation({
+            query: ({ name, members }) => ({
+                url: "chat/new",
+                method: "POST",
+                credentials:"include",
+                body: { name, members },
+            }),
+            invalidatesTags: ["Chat"],
+        }),
     }),
 });
 
 export default api;
-export const { useMyChatsQuery,useChatDetailsQuery,useAcceptFriendRequestMutation,useGetNotificationsQuery,useLazySearchUserQuery,useSendFriendRequestMutation } = api;
+export const { useMyChatsQuery,useNewGroupMutation,useMyGroupsQuery,useAvailableFriendsQuery,useGetMessagesQuery,useSendAttachmentsMutation,useChatDetailsQuery,useAcceptFriendRequestMutation,useGetNotificationsQuery,useLazySearchUserQuery,useSendFriendRequestMutation } = api;

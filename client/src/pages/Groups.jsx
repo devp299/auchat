@@ -8,6 +8,9 @@ import AvatarCard from '../components/shared/AvatarCard';
 import { sampleChats, sampleUsers } from '../constants/sampleData';
 import UserItem from '../components/shared/UserItem';
 import { bgGradient } from '../constants/color';
+import { useChatDetailsQuery, useMyGroupsQuery } from '../redux/api/api';
+import { useErrors } from '../hooks/hook';
+import { LayoutLoader } from '../components/layout/Loaders';
 
 const ConfirmDeleteDialog = lazy(() => import("../components/dialogs/ConfirmDeleteDialog"))
 const AddMemberDialog = lazy(() => import("../components/dialogs/AddMemberDialog"))
@@ -17,11 +20,46 @@ const Groups = () => {
   const chatId = useSearchParams()[0].get("group");
   const navigate = useNavigate();
 
+  const myGroups = useMyGroupsQuery("");
+
+  const groupDetails = useChatDetailsQuery(
+    { chatId, populate: true},
+    { skip: !chatId}    
+  );
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEdit,setIsEdit] = useState(false);
   const [confirmDeleteDialog,setConfirmDeleteDialog] = useState(false);
   const [groupName,setGroupName] = useState("")
   const [groupNameUpdatedValue,setGroupNameUpdatedValue] = useState("")
+  const [members,setMembers] = useState([]);
+  const errors = [
+    {
+      isError: myGroups.isError,
+      error: myGroups.error,
+    },
+    {
+      isError: groupDetails.isError,
+      error: groupDetails.error,
+    },
+];
+  useErrors(errors);
+
+  useEffect(() => {
+    const groupData = groupDetails.data;
+    if(groupData){
+      setGroupName(groupData.chat.name);
+      setGroupNameUpdatedValue(groupData.chat.name);
+      setMembers(groupData.chat.members);
+    }
+
+    return () => {
+      setGroupName("");
+      setGroupNameUpdatedValue("");
+      setMembers([]);
+      setIsEdit(false);
+    }
+  },[groupDetails.data]);
   const navigateBack = () => {
     navigate("/");
   };
@@ -134,7 +172,7 @@ const GroupName =
         <Button size='large' variant='contained'startIcon={<AddIcon />} onClick={openAddMemberHandler}>Add Member</Button>
       </Stack>
     );
-  return (
+  return myGroups.isLoading? ( <LayoutLoader /> ): (
   <Grid container height={"100vh"}>
     <Grid
       item
@@ -146,7 +184,7 @@ const GroupName =
       }}
       sm={4}
     >
-        <GroupList myGroups={sampleChats} chatId={chatId}/> 
+        <GroupList myGroups={myGroups?.data?.groups} chatId={chatId}/> 
     </Grid>
     <Grid item xs={12} sm={8} sx={{
       display: "flex",
@@ -179,7 +217,7 @@ const GroupName =
             overflow={"auto"}
           >
             {
-              sampleUsers.map((i) => (
+              groupDetails?.data?.chat?.members?.map((i) => (
                 <UserItem user={i} key={i._id} isAdded styling={{
                   boxShadow: "0 0 0.5rem rgba(0,0,0,0.2)",
                   padding: "1rem 1.5rem",
@@ -223,7 +261,7 @@ const GroupName =
       open={isMobileMenuOpen} 
       onClose={handleMobileClose}
     >
-     <GroupList w={"50vw"} myGroups={sampleChats} chatId={chatId}/> 
+     <GroupList w={"50vw"} myGroups={myGroups?.data?.groups} chatId={chatId}/> 
     </Drawer>
   </Grid>
   );

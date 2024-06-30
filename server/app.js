@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 import {createServer} from 'http';
 import cors from 'cors';
 import {v2 as cloudinary} from 'cloudinary';
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, START_TYPING, STOP_TYPING } from "./constants/events.js";
 import {v4 as uuid} from 'uuid';
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
@@ -41,6 +41,8 @@ const server = createServer(app);
 const io = new Server(server,{
     cors: corsOptions,
 });
+
+app.set("io",io);
 // Using MiddleWares here
 app.use(express.json());
 app.use(cookieParser());
@@ -65,7 +67,7 @@ io.use((socket,next) => {
 io.on("connection",(socket) =>{
     const user = socket.user;
     userSocketIDs.set(user._id.toString(),socket.id);
-    console.log(userSocketIDs)
+    // console.log(userSocketIDs)
 
     socket.on(NEW_MESSAGE, async({chatId,members,message})=> {
         const messageForRealTime = {
@@ -98,7 +100,20 @@ io.on("connection",(socket) =>{
         } catch (error) {
             console.log(error)
         }
-    })
+    });
+
+    socket.on(START_TYPING,({members,chatId}) => {
+        console.log("start-typing",chatId);
+        const membersSockets = getSockets(members);
+        socket.to(membersSockets).emit(START_TYPING, { chatId })
+    });
+    
+    socket.on(STOP_TYPING,({members,chatId}) => {
+        console.log("stop-typing",chatId);
+        const membersSockets = getSockets(members);
+        socket.to(membersSockets).emit(STOP_TYPING, { chatId })
+    });
+
     socket.on("disconnect",() => {
         console.log("user disconnected");
         userSocketIDs.delete(user._id.toString())
