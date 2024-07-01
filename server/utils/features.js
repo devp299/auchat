@@ -21,10 +21,11 @@ const connectDB = (DB) => {
 
 const sendToken = (res,user,code,message) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
-    console.log(token)
+    // console.log(token)
 
     return res.status(code).cookie("auchat-token",token,cookieOptions).json({
         success: true,
+        user,
         message,
     })
 }

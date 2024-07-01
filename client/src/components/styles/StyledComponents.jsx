@@ -44,8 +44,8 @@ const SearchField = styled("input")`
 `
 
 const CurveButton = styled("button")`
-    border-radius: 1.5rem;
-    padding: 1rem 2rem;
+    border-radius: 1rem;
+    padding: 0.7rem 1.3rem;
     border: none;
     outline: none;
     cursor: pointer;

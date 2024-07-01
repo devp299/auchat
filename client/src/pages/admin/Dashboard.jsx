@@ -1,16 +1,29 @@
 import React from 'react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { AppBar, Box, Container, Paper, Stack, Typography } from '@mui/material'
+import { Box, Container, Paper, Stack, Typography } from '@mui/material'
 import { AdminPanelSettings as AdminPanelSettingsIcon, Group as GroupIcon, Message as MessageIcon, Notifications as NotificationsIcon, Person as PersonIcon, SportsRugbySharp, Widgets } from '@mui/icons-material'
 import moment from 'moment'
 import { CurveButton, SearchField } from '../../components/styles/StyledComponents'
 import { DoughnutChart, LineChart } from '../../components/specific/Chart'
+import { useFetchData } from '6pp';
+import { server } from '../../constants/config'
+import { LayoutLoader } from "../../components/layout/Loaders";
+import { useErrors } from "../../hooks/hook";
 
 const Dashboard = () => {
+
+  const { loading, data, error } = useFetchData(`${server}/api/v1/admin/stats`,"dashboard-stats")
+
+  const {stats} = data || {};
+  
+  useErrors([{
+    isError: error,
+    error: error,
+  }])
   const AppBar = 
   <Paper
     elevation={3}
-    sx={{padding: "1rem", margin: "2rem 0", borderRadius: "1rem"
+    sx={{padding: "0.5rem", margin: "2rem 1rem", borderRadius: "1rem"
 }}
   >
     <Stack direction={"row"} alignItems={"center"} spacing={"1rem"}>
@@ -41,14 +54,16 @@ const Dashboard = () => {
       spacing="2rem"
       justifyContent="space-beteeen"
       alignItems={"center"}
-      margin={"2rem 0"}
+      margin={"2rem 1rem"}
     >
-      <Widget title={"Users"} value={34} Icon={<PersonIcon />}/>
-      <Widget title={"Chats"} value={3} Icon={<GroupIcon/>}/>
-      <Widget title={"Messages"} value={534} Icon={<MessageIcon />}/>
+      <Widget title={"Users"} value={stats?.usersCount} Icon={<PersonIcon />}/>
+      <Widget title={"Chats"} value={stats?.totalChatsCount} Icon={<GroupIcon/>}/>
+      <Widget title={"Messages"} value={stats?.messagesCount} Icon={<MessageIcon />}/>
     </Stack>
   )
-  return (
+
+
+  return loading ? (<LayoutLoader /> ) : (
     <AdminLayout>
         <Container component={"main"}>
           {AppBar}
@@ -56,14 +71,15 @@ const Dashboard = () => {
             <Paper
               elevation={3}
               sx={{
+                // margin: "2rem",
                 padding: "2rem 3.5rem",
                 borderRadius: "1rem",
                 width: "100%",
-                maxWidth: "30rem",
+                maxWidth: "29rem",
               }}
             >
-            <Typography margin={"1rem 0"} variant='h5'>Last Messages</Typography>
-            <LineChart value={[2,34,43,14,63]} />
+            <Typography margin={"0.8rem 0"} variant='h5'>Last Messages</Typography>
+            <LineChart value={stats?.messagesChart || []} />
             </Paper>
 
             <Paper
@@ -81,7 +97,7 @@ const Dashboard = () => {
                 height: "20rem"
               }}
             >
-              <DoughnutChart labels={["Single Chats", "Group Chats"]} value={[23,45]}/>
+              <DoughnutChart labels={["Single Chats", "Group Chats"]} value={[stats?.totalChatsCount - stats?.groupsCount || 0  ,stats?.groupsCount || 0]}/>
               <Stack
                 position={"absolute"}
                 direction={"row"}

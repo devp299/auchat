@@ -37,7 +37,7 @@ const socketAuthenticator = async (arr, socket, next) => {
 
         const authToken = socket.request.cookies["auchat-token"];
 
-        console.log(authToken);
+        // console.log(authToken);
         if(!authToken) 
             return next(new ErrorHandler("Please login to access this route",401));
 

@@ -115,7 +115,7 @@ io.on("connection",(socket) =>{
     });
 
     socket.on("disconnect",() => {
-        console.log("user disconnected");
+        // console.log("user disconnected");
         userSocketIDs.delete(user._id.toString())
     });
 });

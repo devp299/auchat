@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 
 export default function Login() {
     const [isLogin,setIsLogin] = useState(true);
+    const [isLoading,setIsLoading] = useState(false)
 
     const toggleLogin = () => setIsLogin((prev) => !prev)
 
@@ -25,6 +26,8 @@ export default function Login() {
     const dispatch = useDispatch();
     const handleLogin = async (e) => {
         e.preventDefault();
+        const toastId = toast.loading("Logging in...")
+        setIsLoading(true)
         const config = {
             withCredentials: true,
             headers: {
@@ -38,15 +41,22 @@ export default function Login() {
             },
             config
             );
-            dispatch(userExists(true))
-            toast.success(data.message);
+            dispatch(userExists(data.user));
+            toast.success(data.message, {
+                id: toastId,
+            });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Something Went Wrong"); 
+            toast.error(error?.response?.data?.message || "Something Went Wrong", {
+                id: toastId,
+            }); 
+        }finally{
+            setIsLoading(false);
         }
     };
     const handleSignUp = async (e) => {
         e.preventDefault();
-
+        const toastId = toast.loading("Signing Up...")
+        setIsLoading(true);
         const formData = new FormData();
 
         formData.append("avatar",avatar.file);
@@ -64,10 +74,16 @@ export default function Login() {
             const {data} = await axios.post(
                 `${server}/api/v1/user/new`,formData,config
             );
-            dispatch(userExists(true));
-            toast.success(data.message);
+            dispatch(userExists(data.user));
+            toast.success(data.message, {
+                id: toastId,
+            });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Something Went Wrong");
+            toast.error(error?.response?.data?.message || "Something Went Wrong", {
+                id: toastId,
+            });
+        }finally{
+            setIsLoading(false);
         }
     };
   return (
@@ -108,12 +124,12 @@ export default function Login() {
 
                 <Button sx={{
                     marginTop: "0.7rem",
-                }}variant="contained" color='primary' fullWidth type='submit'>
+                }}variant="contained" color='primary' fullWidth type='submit' disabled={isLoading}>
                     Login
                 </Button>
 
                 <Typography textAlign={"center"} m={"0.7rem"}>OR</Typography>
-                <Button sx={{
+                <Button disabled={isLoading} sx={{
                     marginTop: "-0.5rem"
                 }}variant="text" fullWidth type='submit'
                 onClick={toggleLogin}>Sign Up</Button>
@@ -186,14 +202,14 @@ export default function Login() {
                         </Typography>
                     )
                 }
-                <Button sx={{
+                <Button disabled={isLoading} sx={{
                     marginTop: "0.7rem",
                 }}variant="contained" color='primary' fullWidth type='submit'>
                     Sign Up
                 </Button>
 
                 <Typography textAlign={"center"} m={"0.7rem"}>OR</Typography>
-                <Button sx={{
+                <Button disabled={isLoading} sx={{
                     marginTop: "-0.5rem"
                 }}variant="text" fullWidth type='submit' margin="dense"
                 onClick={toggleLogin}>Login</Button>

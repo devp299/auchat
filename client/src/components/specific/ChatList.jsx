@@ -22,7 +22,7 @@ const ChatList = ({
       const {avatar, _id, name, groupChat, members} = data;
 
       const newMessageAlert = newMessagesAlert.find(
-        (chatId) => chatId === _id
+        ({chatId}) => chatId === _id
       );
 
       const isOnline = members?.some((member) => onlineUsers.includes(_id));

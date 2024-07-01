@@ -4,6 +4,8 @@ import { grayColor, lightBlue, matBlack } from '../../constants/color'
 import {Dashboard as DashboardIcon, Close as CloseIcon, Menu as MenuIcon, ManageAccounts as ManageAccountsIcon, Groups as GroupsIcon, Message as MessageIcon, ExitToApp as ExitToAppIcon} from '@mui/icons-material'
 import { useLocation, Link as LinkComponent, Navigate} from 'react-router-dom'
 import styled from '@emotion/styled'
+import { useDispatch, useSelector } from 'react-redux'
+import { adminLogout } from '../../redux/thunks/admin'
 
 const Link = styled(LinkComponent)`
     text-decoration: none;
@@ -40,9 +42,11 @@ const adminTabs = [
 ]
 
 const SideBar = ({ w="100%" }) => {
-    const location = useLocation()
+    const location = useLocation();
+    const dispatch = useDispatch();
+
     const logoutHandler = () => {
-        console.log("logout")
+        dispatch(adminLogout())
     };
     return (
         <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"}>
@@ -54,7 +58,7 @@ const SideBar = ({ w="100%" }) => {
                         to={tab.path}
                         sx={
                             location.pathname === tab.path && {
-                                bgcolor: lightBlue,
+                                bgcolor: matBlack,
                                 color: "white",
                                 ":hover" : { color : "white" },
                             }
@@ -69,7 +73,7 @@ const SideBar = ({ w="100%" }) => {
                 <Link onClick={logoutHandler}>
                     <Stack direction={"row"} alignItems={"center"} spacing={"1rem"}>
                         <ExitToAppIcon />
-                            <Typography>Logout</Typography>
+                        <Typography>Logout</Typography>
                     </Stack>
                 </Link>
             </Stack>
@@ -79,8 +83,9 @@ const SideBar = ({ w="100%" }) => {
 };
 
 
-const isAdmin = true;
 const AdminLayout = ({ children }) => {
+    const {isAdmin} = useSelector((state) => state.auth);
+
     const [isMobile,setIsMobile] = useState(false);
     const handleMobile = () => setIsMobile(!isMobile);
     const handleClose = () => setIsMobile(false);

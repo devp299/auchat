@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import AppLayout from '../components/layout/AppLayout'
 import { IconButton, Skeleton, Stack } from '@mui/material';
 import { grayColor } from '../constants/color';
-import { Send as SendIcon, AttachFile as AttachFileIcon } from '@mui/icons-material';
+import { Send as SendIcon, AttachFile as AttachFileIcon, KeyboardReturnOutlined } from '@mui/icons-material';
 import { InputBox } from '../components/styles/StyledComponents';
 import { orange } from '../constants/color';
 import FileMenu from '../components/dialogs/FileMenu';
@@ -17,13 +17,14 @@ import { useDispatch } from 'react-redux';
 import { setIsFileMenu } from '../redux/reducers/misc.js';
 import { removeNewMessagesAlert } from '../redux/reducers/chat';
 import { TypingLoader } from '../components/layout/Loaders';
+import { useNavigate } from 'react-router-dom';
 
 const Chat = ({chatId,user}) => {
 
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();                                                                        
   const socket = getSocket();
   
   const [message,setMessage] = useState("");
@@ -96,6 +97,10 @@ const Chat = ({chatId,user}) => {
     if(bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" })
   },[messages])
 
+  useEffect(() => {
+    if(chatDetails.isError) return navigate("/")
+  },[chatDetails.isError]);
+
   const newMessagesListener = useCallback((data) => {
     if(data.chatId !== chatId) return;
     setMessages((prev) => [...prev,data.message] )
@@ -111,11 +116,10 @@ const Chat = ({chatId,user}) => {
     setUserTyping(false);
   },[chatId]);
 
-  const alertListener = useCallback((content) => {
-
-    // 
+  const alertListener = useCallback((data) => {
+    if(data.chatId !== chatId) return;
       const messageForAlert = {
-        content,
+        content: data.message,
         sender: {
           _id: "adnlkslfnslkfnk",
           name: "Admin",
