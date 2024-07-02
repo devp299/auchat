@@ -9,7 +9,7 @@ import FileMenu from '../components/dialogs/FileMenu';
 import { sampleMessage } from '../constants/sampleData';
 import MessageComponent from '../components/shared/MessageComponent';
 import { getSocket } from '../socket';
-import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
+import { ALERT, CHAT_JOINED, CHAT_LEAVED, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../constants/events';
 import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api.js';
 import { useErrors, useSocketEvents } from '../hooks/hook';
 import { useInfiniteScrollTop } from '6pp';
@@ -82,7 +82,7 @@ const Chat = ({chatId,user}) => {
   };
 
   useEffect(() => {
-    
+    socket.emit(CHAT_JOINED,{userId: user._id, members });
     dispatch(removeNewMessagesAlert(chatId))
 
     return () => {
@@ -90,6 +90,7 @@ const Chat = ({chatId,user}) => {
       setMessage("");
       setOldMessages([]);
       setPage(1);
+      socket.emit(CHAT_LEAVED,{userId: user._id, members });
     };
   },[chatId])
 

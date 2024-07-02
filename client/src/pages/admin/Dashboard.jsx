@@ -1,6 +1,6 @@
 import React from 'react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { Box, Container, Paper, Stack, Typography } from '@mui/material'
+import { Box, Container, Paper, Skeleton, Stack, Typography } from '@mui/material'
 import { AdminPanelSettings as AdminPanelSettingsIcon, Group as GroupIcon, Message as MessageIcon, Notifications as NotificationsIcon, Person as PersonIcon, SportsRugbySharp, Widgets } from '@mui/icons-material'
 import moment from 'moment'
 import { CurveButton, SearchField } from '../../components/styles/StyledComponents'
@@ -63,9 +63,10 @@ const Dashboard = () => {
   )
 
 
-  return loading ? (<LayoutLoader /> ) : (
+  return (
     <AdminLayout>
-        <Container component={"main"}>
+        {
+          loading? <Skeleton height={"100vh"}/> : <Container component={"main"}>
           {AppBar}
           <Stack direction={{ xs: "column",lg: "row"}} justifyContent={"center"} alignItems={{ xs:"center", lg: "stretch"}} flexWrap={"wrap"} sx={{ gap: "2rem"}}>
             <Paper
@@ -114,6 +115,7 @@ const Dashboard = () => {
           </Stack>
           {Widgets}
         </Container>
+        }
     </AdminLayout>
   );
 };

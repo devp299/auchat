@@ -7,6 +7,9 @@ import {fileFormat, transformImage} from '../../lib/features'
 import AvatarCard from '../../components/shared/AvatarCard'
 import moment from 'moment';
 import RenderAttachment from '../../components/shared/RenderAttachment'
+import { useFetchData } from '6pp';
+import { server } from '../../constants/config';
+import { useErrors } from '../../hooks/hook';
 
 const columns = [
   {
@@ -83,21 +86,35 @@ const columns = [
 ];
 
 const MessageManagement = () => {
+  const { loading, data, error } = useFetchData(`${server}/api/v1/admin/messages`,"dashboard-messages")
+
+  const {stats} = data || {};
+  
+  useErrors([{
+    isError: error,
+    error: error,
+  }])
+
   const [rows,setRows] = useState([])
 
   useEffect(()=> {
-    setRows(dashboardData.messages.map((i) => ({
-      ...i,id: i._id,
-      sender: {
-        name: i.sender.name,
-        avatar: transformImage(i.sender.avatar,50)
-      },
-      createdAt: moment(i.createdAt).format("MMMM Do YYYY, h:mm:ss a"),
-    })))
-  },[])
+    if(data) {
+      setRows(data.messages.map((i) => ({
+        ...i,id: i._id,
+        sender: {
+          name: i.sender.name,
+          avatar: transformImage(i.sender.avatar,50)
+        },
+        createdAt: moment(i.createdAt).format("MMMM Do YYYY, h:mm:ss a"),
+      })))
+    }
+  },[data])
   return (
     <AdminLayout>
-      <Table heading={"All Messages"} columns={columns} rows={rows} rowHeight={200} />
+      {
+        loading ? (<Skeleton height={"100vh"}/>) : (<Table heading={"All Messages"} columns={columns} rows={rows} rowHeight={200} />)
+      }
+      
     </AdminLayout>
   )
 }
