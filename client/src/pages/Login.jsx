@@ -182,7 +182,7 @@ export default function Login() {
                             {avatar.error}
                         </Typography>
                     )
-                    }
+                }
                 <TextField required fullWidth label="Name" margin="dense" variant="outlined" value={name.value} onChange={name.changeHandler} />
 
                 <TextField required fullWidth label="Bio" margin="dense" variant="outlined" value={bio.value} onChange={bio.changeHandler}/>

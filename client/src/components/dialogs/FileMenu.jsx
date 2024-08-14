@@ -118,7 +118,7 @@ const FileMenu = ({anchorE1,chatId}) => {
               multiple
               accept="*"
               style={{ display: "none"}}
-              onChange={(e) => fileChangeHandler(e,"Files")}
+              // onChange={(e) => fileChangeHandler(e,"Files")}
               ref={fileRef}
             />
           </MenuItem>

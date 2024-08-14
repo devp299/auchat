@@ -46,6 +46,7 @@ const getAdminData = TryCatch(async (req,res,next) => {
         admin: true,
     })
 })
+
 const allUsers = TryCatch(async (req,res) => {
 
     const users = await User.find({});

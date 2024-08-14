@@ -19,7 +19,6 @@ export const LayoutLoader = () => {
                     display: {xs: "none", md: "block"},
                 }}>
                     <Skeleton variant='rectangular' height={"100vh"}/>
-
                 </Grid>
             </Grid>
   )

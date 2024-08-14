@@ -19,7 +19,7 @@ import DeleteChatMenu from '../dialogs/DeleteChatMenu';
 
 const AppLayout = () => WrappedComponent=> {
   return (props) => {
-      const params = useParams();
+    const params = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const socket = getSocket();

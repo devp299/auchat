@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import {hash} from 'bcrypt';
+
 const schema = new Schema({
     name: {
         type: String,

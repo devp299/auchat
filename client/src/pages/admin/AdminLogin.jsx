@@ -23,6 +23,7 @@ const AdminLogin = () => {
     useEffect(() => {
         dispatch(getAdmin());
     },[dispatch])
+    
     if(isAdmin) return <Navigate to="/admin/dashboard" /> 
     return (
         <div style={
