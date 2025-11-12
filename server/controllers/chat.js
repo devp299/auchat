@@ -29,10 +29,15 @@ const newGroupChat = TryCatch(async (req,res,next)=> {
 
 const getMyChats = TryCatch(async (req,res,next)=> {
 
+    console.log(req.user);
+
     const chats = await Chat.find({ members: req.user }).populate(
         "members",
         "name avatar"
     );
+    
+    
+    console.log(chats);
 
     const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
 

@@ -27,6 +27,11 @@ const App = () => {
   const {user,loader} = useSelector(state => state.auth)
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    axios
+    .get('https://dummyjson.com/users').then()
+  })
+  
   useEffect(()=>{
     axios
     .get(`${server}/api/v1/user/me`,{ withCredentials: true })
